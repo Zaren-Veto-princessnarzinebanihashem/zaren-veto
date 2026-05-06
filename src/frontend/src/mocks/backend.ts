@@ -1,0 +1,294 @@
+import type { backendInterface } from "../backend";
+import { Principal } from "@icp-sdk/core/principal";
+import { ReactionType, Visibility, type UserProfile } from "../backend";
+
+const samplePrincipal = Principal.fromText("2vxsx-fae");
+
+const mockUserProfile: UserProfile = {
+  id: samplePrincipal,
+  username: "zaren_user",
+  bio: "",
+  postCount: BigInt(0),
+  followerCount: BigInt(0),
+  followingCount: BigInt(0),
+  isVerified: false,
+  isOfficialPage: false,
+  visibility: Visibility.everyone,
+};
+
+const mockPost = (overrides: { id: bigint; content: string; authorName: string; visibility: Visibility; createdAt: bigint }) => ({
+  authorVerified: false,
+  isPinned: false,
+  authorProfilePhoto: undefined,
+  imageUrl: undefined,
+  updatedAt: overrides.createdAt,
+  authorId: samplePrincipal,
+  isRepost: false,
+  originalPostId: undefined,
+  ...overrides,
+});
+
+export const mockBackend: backendInterface = {
+  addComment: async () => BigInt(1),
+  createPost: async () => ({ __kind__: "ok" as const, ok: BigInt(1) }),
+  deleteComment: async () => {},
+  deletePost: async () => true,
+  editComment: async () => {},
+  editPost: async () => true,
+  followUser: async () => true,
+  getComments: async () => [],
+  getConversations: async () => [
+    {
+      conversationId: "conv-1",
+      otherUserId: samplePrincipal,
+      otherUsername: "layla_k",
+      lastMessagePreview: "مرحبا، كيف حالك؟",
+      lastMessageAt: BigInt(Date.now() - 3600000),
+    },
+    {
+      conversationId: "conv-2",
+      otherUserId: samplePrincipal,
+      otherUsername: "omar_veto",
+      lastMessagePreview: "شكراً على المتابعة!",
+      lastMessageAt: BigInt(Date.now() - 86400000),
+    },
+  ],
+  getFeed: async () => [
+    mockPost({
+      id: BigInt(1),
+      content: "مرحباً بالجميع في Zaren Veto — منصة التواصل الاجتماعي الآمنة والمشفرة. بياناتك ملكك وحدك.",
+      authorName: "zaren_admin",
+      createdAt: BigInt(Date.now() - 1800000),
+      visibility: Visibility.everyone,
+    }),
+    mockPost({
+      id: BigInt(2),
+      content: "السيادة الرقمية حق أساسي لكل مستخدم. لا مراقبة، لا بيانات مسربة، لا وسيط.",
+      authorName: "layla_k",
+      createdAt: BigInt(Date.now() - 7200000),
+      visibility: Visibility.everyone,
+    }),
+    mockPost({
+      id: BigInt(3),
+      content: "أول يوم لي على المنصة وأنا منبهر بمستوى الأمان والتصميم الراقي.",
+      authorName: "omar_veto",
+      createdAt: BigInt(Date.now() - 10800000),
+      visibility: Visibility.followersOnly,
+    }),
+  ],
+  getLikes: async () => [],
+  getMessages: async () => [
+    {
+      id: BigInt(1),
+      senderId: samplePrincipal,
+      conversationId: "conv-1",
+      encryptedContent: new Uint8Array([72, 101, 108, 108, 111]),
+      createdAt: BigInt(Date.now() - 3600000),
+      isRead: false,
+    },
+  ],
+  getOfficialPage: async () => ({
+    id: samplePrincipal,
+    username: "Zaren Veto",
+    bio: "التطبيق الرسمي لـ Zaren Veto — خصوصيتك تهمنا.",
+    postCount: BigInt(0),
+    followerCount: BigInt(19000),
+    followingCount: BigInt(0),
+    isVerified: true,
+    isOfficialPage: true,
+    visibility: Visibility.everyone,
+  }),
+  getMyProfile: async () => ({
+    id: samplePrincipal,
+    username: "zaren_user",
+    bio: "مستخدم Zaren Veto — أؤمن بالخصوصية والسيادة الرقمية.",
+    postCount: BigInt(3),
+    followerCount: BigInt(12),
+    followingCount: BigInt(7),
+    isVerified: false,
+    isOfficialPage: false,
+    visibility: Visibility.everyone,
+  }),
+  getMyReaction: async () => null,
+  getNotifications: async () => [],
+  getPostStats: async () => ({ likes: BigInt(0), comments: BigInt(0), shares: BigInt(0) }),
+  getReactions: async () => [],
+  getSavedPosts: async () => [],
+  getShares: async () => BigInt(0),
+  getUnreadCount: async () => BigInt(0),
+  getUserPosts: async () => [],
+  getUserProfile: async () => null,
+  hasLiked: async () => false,
+  isFollowing: async () => false,
+  isVerified: async () => false,
+  likePost: async () => {},
+  markNotificationsRead: async () => {},
+  reactToPost: async () => {},
+  register: async () => true,
+  removeReaction: async () => {},
+  replyToComment: async () => BigInt(1),
+  reportPost: async () => {},
+  reportUser: async () => {},
+  savePost: async () => {},
+  searchUsers: async () => [],
+  sendMessage: async () => BigInt(1),
+  sharePost: async () => {},
+  unfollowUser: async () => true,
+  unlikePost: async () => {},
+  unsavePost: async () => {},
+  unsharePost: async () => {},
+  updateCoverPhoto: async () => ({ __kind__: "ok" as const, ok: null }),
+  updateProfile: async () => true,
+  updateProfilePhoto: async () => ({ __kind__: "ok" as const, ok: null }),
+
+  // New methods
+  banUser: async () => true,
+  blockUser: async () => {},
+  cancelFriendRequest: async () => true,
+  createPoll: async () => BigInt(1),
+  createStory: async () => ({
+    id: BigInt(1),
+    expiresAt: BigInt(Date.now() + 86400000),
+    viewedByMe: false,
+    createdAt: BigInt(Date.now()),
+    author: {
+      id: samplePrincipal,
+      username: "zaren_user",
+      bio: "",
+      postCount: BigInt(0),
+      followerCount: BigInt(0),
+      followingCount: BigInt(0),
+      isVerified: false,
+      isOfficialPage: false,
+      visibility: Visibility.everyone,
+    },
+    imageUrl: "",
+    viewCount: BigInt(0),
+  }),
+  deleteStory: async () => {},
+  getAdminStats: async () => ({
+    pendingReports: BigInt(0),
+    totalMessages: BigInt(0),
+    verifiedUsers: BigInt(0),
+    totalUsers: BigInt(0),
+    totalPosts: BigInt(0),
+    totalStories: BigInt(0),
+  }),
+  getAllUsers: async () => [],
+  getFriendRequestStatus: async () => "none",
+  getHashtagPosts: async () => [],
+  getMessageReactions: async () => [],
+  getMyStories: async () => [],
+  getPendingRequests: async () => [],
+  getPollResults: async () => ({ totalVotes: BigInt(0), options: [] }),
+  getReports: async () => [],
+  getSentRequests: async () => [],
+  getStoriesFeed: async () => [],
+  getStoryViewers: async () => [],
+  getTrendingHashtags: async () => [],
+  grantVerification: async () => true,
+  isBlocked: async () => false,
+  markMessageRead: async () => {},
+  pinPost: async () => true,
+  reactToMessage: async () => true,
+  removeMessageReaction: async () => true,
+  resolveReport: async () => true,
+  respondFriendRequest: async () => true,
+  revokeVerification: async () => true,
+  searchContent: async () => ({ users: [], posts: [] }),
+  sendFriendRequest: async () => true,
+  suspendUser: async () => true,
+  unblockUser: async () => {},
+  unpinPost: async () => true,
+  updateAbout: async () => true,
+  viewStory: async () => {},
+  votePoll: async () => true,
+
+  // Methods added in latest backend version
+  createOfficialPost: async () => ({ __kind__: "ok" as const, ok: BigInt(1) }),
+  getOfficialPagePosts: async () => [],
+  registerWithPassword: async () => ({ __kind__: "ok" as const, ok: true }),
+  getOfficialPageLink: async () => "https://example.com/official",
+  getProfileLink: async () => "https://example.com/profile/demo",
+  // Security methods
+  getMyEmail: async () => null,
+  loginWithPassword: async () => ({ __kind__: "ok" as const, ok: mockUserProfile }),
+  loginWithPasswordOnly: async () => ({ __kind__: "ok" as const, ok: { userId: samplePrincipal, profile: mockUserProfile } }),
+  updateEmail: async () => true,
+  updateOfficialPageCoverPhoto: async (_url: string) => ({ ok: null } as any),
+  updateOfficialPageProfilePhoto: async (_url: string) => ({ ok: null } as any),
+  setMyPassword: async () => ({ __kind__: "ok" as const, ok: true }),
+
+  // Group methods
+  createGroup: async () => ({
+    __kind__: "ok" as const,
+    ok: {
+      id: BigInt(1),
+      name: "Mock Group",
+      description: "",
+      hasCoverImage: false,
+      coverImageData: undefined,
+      isPrivate: false,
+      ownerId: samplePrincipal,
+      ownerUsername: "zaren_user",
+      memberCount: BigInt(1),
+      isMember: true,
+      createdAt: BigInt(Date.now()),
+    },
+  }),
+  deleteGroup: async () => true,
+  getGroup: async () => null,
+  getGroups: async () => [],
+  getMyGroups: async () => [],
+  inviteMember: async () => ({ __kind__: "ok" as const, ok: true }),
+  joinGroup: async () => ({ __kind__: "ok" as const, ok: true }),
+  leaveGroup: async () => ({ __kind__: "ok" as const, ok: true }),
+
+  // Pages methods
+  createPage: async () => ({ __kind__: "ok" as const, ok: { id: BigInt(1), ownerId: samplePrincipal, name: "Mock Page", createdAt: BigInt(Date.now()), description: "", isVerified: false, isFollowing: false, category: "", followerCount: BigInt(0), profilePhotoUrl: undefined, coverPhotoUrl: undefined } }),
+  createPagePost: async () => ({ __kind__: "ok" as const, ok: mockPost({ id: BigInt(1), content: "", authorName: "zaren_user", visibility: Visibility.everyone, createdAt: BigInt(Date.now()) }) }),
+  followPage: async () => ({ __kind__: "ok" as const, ok: null }),
+  unfollowPage: async () => ({ __kind__: "ok" as const, ok: null }),
+  getMyPages: async () => [],
+  getPage: async () => null,
+  getPagePosts: async () => [],
+  searchPages: async () => [],
+  updatePage: async () => ({ __kind__: "ok" as const, ok: { id: BigInt(1), ownerId: samplePrincipal, name: "", createdAt: BigInt(Date.now()), description: "", isVerified: false, isFollowing: false, category: "", followerCount: BigInt(0), profilePhotoUrl: undefined, coverPhotoUrl: undefined } }),
+  updatePageCoverPhoto: async () => ({ __kind__: "ok" as const, ok: null }),
+  updatePageProfilePhoto: async () => ({ __kind__: "ok" as const, ok: null }),
+
+  // Share / repost methods
+  sharePostToFeed: async () => ({ __kind__: "ok" as const, ok: mockPost({ id: BigInt(1), content: "", authorName: "zaren_user", visibility: Visibility.everyone, createdAt: BigInt(Date.now()) }) }),
+
+  // Session verification
+  verifySession: async () => null,
+
+  // Paginated groups
+  getGroupsPaginated: async () => [],
+
+  // Group post methods
+  createGroupPost: async () => ({ __kind__: "ok" as const, ok: BigInt(1) }),
+  deleteGroupPost: async () => ({ __kind__: "ok" as const, ok: null }),
+  editGroupPost: async () => ({ __kind__: "ok" as const, ok: null }),
+  getGroupPosts: async () => [],
+  likeGroupPost: async () => ({ __kind__: "ok" as const, ok: null }),
+  unlikeGroupPost: async () => ({ __kind__: "ok" as const, ok: null }),
+  updateGroupCoverImage: async () => ({ __kind__: "ok" as const, ok: null }),
+
+  // Post with image
+  editPostWithImage: async () => true,
+
+  // Admin: delete any user account
+  deleteUser: async () => true,
+
+  // Owner account management
+  ensureOwnerAccount: async () => ({ __kind__: "ok" as const, ok: mockUserProfile }),
+  ownerAccountExists: async () => true,
+  ping: async () => true,
+
+  // Followers query
+  getFollowers: async () => [],
+};
+
+// Suppress unused import warning
+void ReactionType;

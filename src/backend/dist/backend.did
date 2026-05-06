@@ -1,0 +1,503 @@
+type Visibility = 
+ variant {
+   customList;
+   everyone;
+   followersOnly;
+   friendsOnly;
+ };
+type UserProfile = 
+ record {
+   aboutBio: opt text;
+   aboutEducation: opt text;
+   aboutLocation: opt text;
+   aboutWebsite: opt text;
+   aboutWork: opt text;
+   bio: text;
+   birthdate: opt text;
+   coverPhotoUrl: opt text;
+   followerCount: nat;
+   followingCount: nat;
+   id: UserId;
+   isOfficialPage: bool;
+   isVerified: bool;
+   postCount: nat;
+   profilePhotoUrl: opt text;
+   username: text;
+   visibility: Visibility;
+ };
+type UserId = principal;
+type Timestamp = int;
+type StoryView = 
+ record {
+   author: UserProfile;
+   createdAt: Timestamp;
+   expiresAt: Timestamp;
+   id: StoryId;
+   imageUrl: text;
+   textOverlay: opt text;
+   viewCount: nat;
+   viewedByMe: bool;
+ };
+type StoryId = nat;
+type StoryFeed = 
+ record {
+   author: UserProfile;
+   hasUnviewed: bool;
+   stories: vec StoryView;
+ };
+type SearchResults = 
+ record {
+   posts: vec PostView;
+   users: vec UserProfile;
+ };
+type RespondAction = 
+ variant {
+   accept;
+   block;
+   decline;
+ };
+type ResolveAction = 
+ variant {
+   banUser;
+   deleteContent;
+   dismiss;
+   suspendUser;
+ };
+type ReportView = 
+ record {
+   createdAt: Timestamp;
+   id: nat;
+   reason: text;
+   reportedPost: opt PostView;
+   reportedUser: opt UserProfile;
+   reporter: UserProfile;
+   status: text;
+ };
+type ReactionType = 
+ variant {
+   angry;
+   haha;
+   like;
+   love;
+   sad;
+   wow;
+ };
+type PostView = 
+ record {
+   authorId: UserId;
+   authorName: text;
+   authorProfilePhoto: opt text;
+   authorVerified: bool;
+   content: text;
+   createdAt: Timestamp;
+   id: PostId;
+   imageUrl: opt text;
+   isPinned: bool;
+   isRepost: bool;
+   originalPostId: opt PostId;
+   updatedAt: Timestamp;
+   visibility: Visibility;
+ };
+type PostStats = 
+ record {
+   comments: nat;
+   likes: nat;
+   shares: nat;
+ };
+type PostId = nat;
+type PollResults = 
+ record {
+   myVote: opt nat;
+   options: vec PollOptionResult;
+   totalVotes: nat;
+ };
+type PollOptionResult = 
+ record {
+   id: nat;
+   percent: float64;
+   "text": text;
+   votes: nat;
+ };
+type PageView = 
+ record {
+   category: text;
+   coverPhotoUrl: opt text;
+   createdAt: Timestamp;
+   description: text;
+   followerCount: nat;
+   id: PageId;
+   isFollowing: bool;
+   isVerified: bool;
+   name: text;
+   ownerId: UserId;
+   profilePhotoUrl: opt text;
+ };
+type PageId = nat;
+type NotificationView = 
+ record {
+   actorId: UserId;
+   actorName: text;
+   createdAt: Timestamp;
+   id: NotificationId;
+   isRead: bool;
+   notifType: NotificationType;
+ };
+type NotificationType = 
+ variant {
+   comment: record {
+              commentId: CommentId;
+              postId: PostId;
+            };
+   follow: record {};
+   friendRequest: record {requestId: nat;};
+   like: record {postId: PostId;};
+   mention: record {postId: PostId;};
+   newUserRegistration: record {fromUsername: text;};
+   reaction: record {
+               postId: PostId;
+               reaction: ReactionType;
+             };
+   share: record {postId: PostId;};
+   verified: record {};
+ };
+type NotificationId = nat;
+type MessageView = 
+ record {
+   conversationId: ConversationId;
+   createdAt: Timestamp;
+   encryptedContent: blob;
+   id: MessageId;
+   isRead: bool;
+   readAt: opt Timestamp;
+   senderId: UserId;
+ };
+type MessageReactionView = 
+ record {
+   reaction: text;
+   reactor: UserProfile;
+ };
+type MessageId = nat;
+type LoginWithPasswordResult = 
+ variant {
+   err: text;
+   ok: record {
+         profile: UserProfile;
+         userId: UserId;
+       };
+ };
+type JoinLeaveGroupResult = 
+ variant {
+   err: text;
+   ok: bool;
+ };
+type HashtagStat = 
+ record {
+   hashtag: text;
+   postCount: nat;
+ };
+type GroupView = 
+ record {
+   coverImageData: opt text;
+   coverImageUrl: opt text;
+   createdAt: Timestamp;
+   description: text;
+   hasCoverImage: bool;
+   id: GroupId;
+   isMember: bool;
+   isPrivate: bool;
+   memberCount: nat;
+   name: text;
+   ownerId: UserId;
+   ownerUsername: text;
+ };
+type GroupPostView = 
+ record {
+   authorId: UserId;
+   authorName: text;
+   authorProfilePhoto: opt text;
+   authorVerified: bool;
+   commentsCount: nat;
+   content: text;
+   createdAt: Timestamp;
+   groupId: GroupId;
+   id: GroupPostId;
+   imageUrl: opt text;
+   likesCount: nat;
+   updatedAt: Timestamp;
+ };
+type GroupPostId = nat;
+type GroupId = nat;
+type FriendRequestView = 
+ record {
+   createdAt: Timestamp;
+   from: UserProfile;
+   id: FriendRequestId;
+   status: text;
+   to: UserProfile;
+ };
+type FriendRequestId = nat;
+type CreateGroupResult = 
+ variant {
+   err: text;
+   ok: GroupView;
+ };
+type ConversationSummary = 
+ record {
+   conversationId: ConversationId;
+   lastMessageAt: Timestamp;
+   lastMessagePreview: text;
+   otherUserId: UserId;
+   otherUsername: text;
+ };
+type ConversationId = text;
+type CommentView = 
+ record {
+   authorId: UserId;
+   authorName: text;
+   content: text;
+   createdAt: Timestamp;
+   id: CommentId;
+   parentId: opt CommentId;
+   postId: PostId;
+   replyCount: nat;
+   updatedAt: Timestamp;
+ };
+type CommentId = nat;
+type AdminStats = 
+ record {
+   pendingReports: nat;
+   totalMessages: nat;
+   totalPosts: nat;
+   totalStories: nat;
+   totalUsers: nat;
+   verifiedUsers: nat;
+ };
+service : {
+  addComment: (postId: PostId, "text": text) -> (CommentId);
+  banUser: (userId: UserId) -> (bool);
+  blockUser: (userId: UserId) -> ();
+  cancelFriendRequest: (requestId: nat) -> (bool);
+  createGroup: (name: text, description: text, isPrivate: bool,
+   coverImageData: opt text) -> (CreateGroupResult);
+  createGroupPost: (groupId: GroupId, content: text, imageUrl: opt text) ->
+   (variant {
+      err: text;
+      ok: GroupPostId;
+    });
+  createOfficialPost: (content: text, imageUrl: opt text) ->
+   (variant {
+      err: text;
+      ok: PostId;
+    });
+  createPage: (name: text, description: text, category: text) ->
+   (variant {
+      err: text;
+      ok: PageView;
+    });
+  createPagePost: (pageId: PageId, content: text) ->
+   (variant {
+      err: text;
+      ok: PostView;
+    });
+  createPoll: (postId: PostId, question: text, options: vec text) -> (nat);
+  createPost: (content: text, visibility: Visibility, customAllowList:
+   vec UserId, imageUrl: opt text) -> (variant {
+                                         err: text;
+                                         ok: PostId;
+                                       });
+  createStory: (imageUrl: text, textOverlay: opt text) -> (StoryView);
+  deleteComment: (commentId: CommentId) -> ();
+  deleteGroup: (groupId: GroupId) -> (bool);
+  deleteGroupPost: (groupId: GroupId, postId: GroupPostId) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  deletePost: (postId: PostId) -> (bool);
+  deleteStory: (storyId: nat) -> ();
+  deleteUser: (userId: UserId) -> (bool);
+  editComment: (commentId: CommentId, "text": text) -> ();
+  editGroupPost: (groupId: GroupId, postId: GroupPostId, newContent: 
+   text) -> (variant {
+               err: text;
+               ok;
+             });
+  editPost: (postId: PostId, content: text) -> (bool);
+  editPostWithImage: (postId: PostId, content: text, newImageUrl:
+   opt text) -> (bool);
+  ensureOwnerAccount: (password: text, email: opt text) ->
+   (variant {
+      err: text;
+      ok: UserProfile;
+    });
+  followPage: (pageId: PageId) -> (variant {
+                                     err: text;
+                                     ok;
+                                   });
+  followUser: (target: UserId) -> (bool);
+  getAdminStats: () -> (AdminStats) query;
+  getAllUsers: (page: nat, pageSize: nat) -> (vec UserProfile) query;
+  getComments: (postId: PostId) -> (vec CommentView) query;
+  getConversations: () -> (vec ConversationSummary) query;
+  getFeed: () -> (vec PostView) query;
+  getFollowers: (userId: UserId) -> (vec UserProfile) query;
+  getFriendRequestStatus: (userId: UserId) -> (text) query;
+  getGroup: (groupId: GroupId) -> (opt GroupView) query;
+  getGroupPosts: (groupId: GroupId) -> (vec GroupPostView) query;
+  getGroups: () -> (vec GroupView) query;
+  getGroupsPaginated: (offset: nat, limit: nat) -> (vec GroupView) query;
+  getHashtagPosts: (hashtag: text) -> (vec PostView) query;
+  getLikes: (postId: PostId) -> (vec UserId) query;
+  getMessageReactions: (messageId: MessageId) ->
+   (vec MessageReactionView) query;
+  getMessages: (otherUser: UserId) -> (vec MessageView) query;
+  getMyEmail: () -> (opt text) query;
+  getMyGroups: () -> (vec GroupView) query;
+  getMyPages: () -> (vec PageView) query;
+  getMyProfile: () -> (opt UserProfile) query;
+  getMyReaction: (postId: PostId) -> (opt ReactionType);
+  getMyStories: () -> (vec StoryView) query;
+  getNotifications: () -> (vec NotificationView);
+  getOfficialPage: () -> (UserProfile) query;
+  getOfficialPageLink: () -> (text) query;
+  getOfficialPagePosts: (page: nat, pageSize: nat) -> (vec PostView) query;
+  getPage: (pageId: PageId) -> (opt PageView) query;
+  getPagePosts: (pageId: PageId) -> (vec PostView) query;
+  getPendingRequests: () -> (vec FriendRequestView) query;
+  getPollResults: (pollId: nat) -> (PollResults) query;
+  getPostStats: (postId: PostId) -> (PostStats) query;
+  getProfileLink: (userId: UserId) -> (text) query;
+  getReactions: (postId: PostId) -> (vec record {
+                                           ReactionType;
+                                           nat;
+                                         }) query;
+  getReports: (page: nat, pageSize: nat) -> (vec ReportView) query;
+  getSavedPosts: () -> (vec PostView);
+  getSentRequests: () -> (vec FriendRequestView) query;
+  getShares: (postId: PostId) -> (nat) query;
+  getStoriesFeed: () -> (vec StoryFeed) query;
+  getStoryViewers: (storyId: nat) -> (vec UserProfile) query;
+  getTrendingHashtags: () -> (vec HashtagStat) query;
+  getUnreadCount: () -> (nat);
+  getUserPosts: (userId: UserId) -> (vec PostView) query;
+  getUserProfile: (userId: UserId) -> (opt UserProfile) query;
+  grantVerification: (userId: UserId) -> (bool);
+  hasLiked: (postId: PostId) -> (bool);
+  inviteMember: (groupId: GroupId, username: text) -> (JoinLeaveGroupResult);
+  isBlocked: (userId: UserId) -> (bool) query;
+  isFollowing: (target: UserId) -> (bool) query;
+  isVerified: (userId: UserId) -> (bool) query;
+  joinGroup: (groupId: GroupId) -> (JoinLeaveGroupResult);
+  leaveGroup: (groupId: GroupId) -> (JoinLeaveGroupResult);
+  likeGroupPost: (groupId: GroupId, postId: GroupPostId) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  likePost: (postId: PostId) -> ();
+  loginWithPassword: (username: text, password: text) ->
+   (variant {
+      err: text;
+      ok: UserProfile;
+    });
+  loginWithPasswordOnly: (username: text, password: text) ->
+   (LoginWithPasswordResult);
+  markMessageRead: (messageId: MessageId) -> ();
+  markNotificationsRead: () -> ();
+  ownerAccountExists: () -> (bool) query;
+  pinPost: (postId: PostId) -> (bool);
+  ping: () -> (bool) query;
+  reactToMessage: (messageId: MessageId, reaction: ReactionType) -> (bool);
+  reactToPost: (postId: PostId, reaction: ReactionType) -> ();
+  register: (username: text, bio: text) -> (bool);
+  registerWithPassword: (username: text, password: text, bio: text, email:
+   opt text) -> (variant {
+                   err: text;
+                   ok: bool;
+                 });
+  removeMessageReaction: (messageId: MessageId) -> (bool);
+  removeReaction: (postId: PostId) -> ();
+  replyToComment: (parentCommentId: CommentId, "text": text) -> (CommentId);
+  reportPost: (postId: PostId, reason: text) -> ();
+  reportUser: (userId: UserId, reason: text) -> ();
+  resolveReport: (reportId: nat, action: ResolveAction) -> (bool);
+  respondFriendRequest: (requestId: nat, action: RespondAction) -> (bool);
+  revokeVerification: (userId: UserId) -> (bool);
+  savePost: (postId: PostId) -> ();
+  searchContent: (searchQuery: text) -> (SearchResults) query;
+  searchPages: (searchTerm: text) -> (vec PageView) query;
+  searchUsers: (term: text) -> (vec UserProfile) query;
+  sendFriendRequest: (to: UserId) -> (bool);
+  sendMessage: (recipient: UserId, encryptedContent: blob) -> (MessageId);
+  setMyPassword: (newPassword: text) -> (variant {
+                                           err: text;
+                                           ok: bool;
+                                         });
+  sharePost: (postId: PostId) -> ();
+  sharePostToFeed: (originalPostId: PostId, comment: text) ->
+   (variant {
+      err: text;
+      ok: PostView;
+    });
+  suspendUser: (userId: UserId, durationHours: nat) -> (bool);
+  unblockUser: (userId: UserId) -> ();
+  unfollowPage: (pageId: PageId) -> (variant {
+                                       err: text;
+                                       ok;
+                                     });
+  unfollowUser: (target: UserId) -> (bool);
+  unlikeGroupPost: (groupId: GroupId, postId: GroupPostId) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  unlikePost: (postId: PostId) -> ();
+  unpinPost: () -> (bool);
+  unsavePost: (postId: PostId) -> ();
+  unsharePost: (postId: PostId) -> ();
+  updateAbout: (bio: opt text, location: opt text, work: opt text, education:
+   opt text, website: opt text) -> (bool);
+  updateCoverPhoto: (imageUrl: text) -> (variant {
+                                           err: text;
+                                           ok;
+                                         });
+  updateEmail: (email: text) -> (bool);
+  updateGroupCoverImage: (groupId: GroupId, imageUrl: text) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  updateOfficialPageCoverPhoto: (imageUrl: text) -> (variant {
+                                                       err: text;
+                                                       ok;
+                                                     });
+  updateOfficialPageProfilePhoto: (imageUrl: text) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  updatePage: (pageId: PageId, name: text, description: text) ->
+   (variant {
+      err: text;
+      ok: PageView;
+    });
+  updatePageCoverPhoto: (pageId: PageId, imageUrl: text) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  updatePageProfilePhoto: (pageId: PageId, imageUrl: text) ->
+   (variant {
+      err: text;
+      ok;
+    });
+  updateProfile: (username: text, bio: text, visibility: Visibility) ->
+   (bool);
+  updateProfilePhoto: (imageUrl: text) -> (variant {
+                                             err: text;
+                                             ok;
+                                           });
+  verifySession: (userId: UserId) -> (opt UserProfile) query;
+  viewStory: (storyId: nat) -> ();
+  votePoll: (pollId: nat, optionId: nat) -> (bool);
+}

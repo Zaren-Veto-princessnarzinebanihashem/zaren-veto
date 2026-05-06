@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zaren Veto — Page introuvable</title>
+
+  <!-- Redirect any 404 on GitHub Pages straight to the real app -->
+  <meta http-equiv="refresh" content="2; url=https://zaren-veto-princessnarzinebanihashem.icp0.io" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d0d1a; --card: #16213e; --blue: #4169e1;
+      --blue-glow: rgba(65,105,225,.35); --text: #e8e8f0; --muted: #8888aa;
+    }
+    html, body {
+      height: 100%; background: var(--bg); color: var(--text);
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    body {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 24px;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 20% 20%, rgba(65,105,225,.18) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+    .card {
+      position: relative; z-index: 1;
+      background: var(--card);
+      border: 1px solid rgba(65,105,225,.25);
+      border-radius: 16px;
+      box-shadow: 0 0 48px var(--blue-glow), 0 8px 32px rgba(0,0,0,.5);
+      padding: 48px 40px 40px;
+      max-width: 460px; width: 100%; text-align: center;
+      animation: fadeUp .6s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(24px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+    .shield { width: 64px; height: 70px; margin: 0 auto 20px; }
+    .shield svg { width:100%; height:100%; filter: drop-shadow(0 0 12px var(--blue-glow)); }
+    .app-name {
+      font-size: 1.5rem; font-weight: 800;
+      background: linear-gradient(135deg, #6e9fff 0%, #4169e1 50%, #8ab4ff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 16px;
+    }
+    .msg-fr { font-size: .95rem; color: var(--text); margin-bottom: 6px; }
+    .msg-ar { font-size: .95rem; color: var(--muted); direction: rtl; margin-bottom: 24px; }
+    .progress-wrap { background: rgba(255,255,255,.06); border-radius:99px; height:4px; margin-bottom:24px; overflow:hidden; }
+    .progress-bar { height:100%; background: linear-gradient(90deg, #4169e1, #7fa7ff); border-radius:99px; width:0%; animation: fill 2s linear forwards; }
+    @keyframes fill { to { width:100%; } }
+    .manual-link {
+      display: inline-block; padding: 11px 22px;
+      background: var(--blue); color: #fff; text-decoration: none;
+      border-radius: 10px; font-size: .88rem; font-weight: 600;
+      box-shadow: 0 4px 16px var(--blue-glow);
+      transition: background .2s, transform .15s;
+    }
+    .manual-link:hover { background: #3558c5; transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="shield">
+      <svg viewBox="0 0 80 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M40 4 L72 16 L72 46 C72 62 58 76 40 84 C22 76 8 62 8 46 L8 16 Z"
+              fill="#4169e1" stroke="#6e9fff" stroke-width="1.5"/>
+        <path d="M40 8 L68 19 L68 46 C68 60 56 72 40 79.5"
+              stroke="rgba(255,255,255,.18)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle"
+              font-family="'Segoe UI', Arial, sans-serif" font-size="32" font-weight="900"
+              fill="white" letter-spacing="-1">Z</text>
+      </svg>
+    </div>
+
+    <div class="app-name">Zaren Veto</div>
+
+    <div class="msg-fr">Cette page n'existe pas sur GitHub Pages.</div>
+    <div class="msg-ar">هذه الصفحة غير موجودة — جارٍ التوجيه للتطبيق الرسمي…</div>
+
+    <div class="progress-wrap"><div class="progress-bar"></div></div>
+
+    <a href="https://zaren-veto-princessnarzinebanihashem.icp0.io" class="manual-link" id="appLink">
+      Ouvrir Zaren Veto &rarr; / فتح التطبيق →
+    </a>
+  </div>
+
+  <script>
+    var TARGET = 'https://zaren-veto-princessnarzinebanihashem.icp0.io';
+    document.getElementById('appLink').href = TARGET;
+    setTimeout(function() { window.location.replace(TARGET); }, 2000);
+  </script>
+</body>
+</html>

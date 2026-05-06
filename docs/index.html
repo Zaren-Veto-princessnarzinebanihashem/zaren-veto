@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zaren Veto — Redirection</title>
+
+  <!-- Primary redirect — update TARGET_URL once the canister is deployed -->
+  <meta http-equiv="refresh" content="3; url=https://zaren-veto-princessnarzinebanihashem.icp0.io" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d0d1a;
+      --surface:   #1a1a2e;
+      --card:      #16213e;
+      --blue:      #4169e1;
+      --blue-glow: rgba(65, 105, 225, 0.35);
+      --text:      #e8e8f0;
+      --muted:     #8888aa;
+      --radius:    16px;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+    }
+
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    /* ── animated gradient background ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 60% at 20% 20%, rgba(65,105,225,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 50% at 80% 80%, rgba(65,105,225,.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--card);
+      border: 1px solid rgba(65, 105, 225, 0.25);
+      border-radius: var(--radius);
+      box-shadow: 0 0 48px var(--blue-glow), 0 8px 32px rgba(0,0,0,.5);
+      padding: 48px 40px 40px;
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      animation: fadeUp .6s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── shield logo ── */
+    .shield {
+      width: 80px;
+      height: 88px;
+      margin: 0 auto 24px;
+      position: relative;
+    }
+
+    .shield svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 0 14px var(--blue-glow));
+    }
+
+    /* ── app name ── */
+    .app-name {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: .03em;
+      background: linear-gradient(135deg, #6e9fff 0%, #4169e1 50%, #8ab4ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .tagline {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    /* ── progress bar ── */
+    .progress-wrap {
+      background: rgba(255,255,255,.06);
+      border-radius: 99px;
+      height: 5px;
+      margin-bottom: 28px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #4169e1, #7fa7ff);
+      border-radius: 99px;
+      width: 0%;
+      animation: fill 3s linear forwards;
+    }
+
+    @keyframes fill {
+      to { width: 100%; }
+    }
+
+    /* ── status text ── */
+    .status-fr {
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .status-ar {
+      font-size: 1rem;
+      color: var(--muted);
+      direction: rtl;
+      margin-bottom: 28px;
+      font-family: 'Segoe UI', 'Tahoma', 'Arial', sans-serif;
+    }
+
+    /* ── manual link ── */
+    .manual-link {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 12px 24px;
+      background: var(--blue);
+      color: #fff;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: .9rem;
+      font-weight: 600;
+      transition: background .2s, box-shadow .2s, transform .15s;
+      box-shadow: 0 4px 16px var(--blue-glow);
+      line-height: 1.5;
+    }
+
+    .manual-link:hover {
+      background: #3558c5;
+      box-shadow: 0 6px 24px var(--blue-glow);
+      transform: translateY(-2px);
+    }
+
+    .manual-link:active { transform: translateY(0); }
+
+    /* ── footer note ── */
+    .note {
+      margin-top: 28px;
+      font-size: .75rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── spinner dots ── */
+    .dots span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: var(--blue);
+      border-radius: 50%;
+      margin: 0 3px;
+      animation: bounce .9s infinite ease-in-out both;
+    }
+    .dots span:nth-child(2) { animation-delay: .15s; }
+    .dots span:nth-child(3) { animation-delay: .3s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); opacity: .4; }
+      40%            { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- Royal Blue Shield with Z -->
+    <div class="shield">
+      <svg viewBox="0 0 80 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- shield body -->
+        <path d="M40 4 L72 16 L72 46 C72 62 58 76 40 84 C22 76 8 62 8 46 L8 16 Z"
+              fill="#4169e1" stroke="#6e9fff" stroke-width="1.5"/>
+        <!-- highlight gloss -->
+        <path d="M40 8 L68 19 L68 46 C68 60 56 72 40 79.5"
+              stroke="rgba(255,255,255,.18)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Z letter -->
+        <text x="50%" y="56%" dominant-baseline="middle" text-anchor="middle"
+              font-family="'Segoe UI', Arial, sans-serif" font-size="32" font-weight="900"
+              fill="white" letter-spacing="-1">Z</text>
+      </svg>
+    </div>
+
+    <div class="app-name">Zaren Veto</div>
+    <div class="tagline">Réseau Social · شبكة اجتماعية</div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="bar"></div>
+    </div>
+
+    <div class="status-fr">Redirection en cours&hellip; <span class="dots"><span></span><span></span><span></span></span></div>
+    <div class="status-ar">جارٍ إعادة التوجيه إلى التطبيق…</div>
+
+    <a
+      href="https://zaren-veto-princessnarzinebanihashem.icp0.io"
+      class="manual-link"
+      id="appLink"
+    >
+      Cliquez ici si vous n'êtes pas redirigé automatiquement<br/>
+      <small style="font-weight:400;font-size:.8em;">انقر هنا إذا لم تتم إعادة التوجيه تلقائياً</small>
+    </a>
+
+    <p class="note">
+      Zaren Veto est hébergé sur Internet Computer (ICP) —
+      une plateforme décentralisée, sécurisée et privée.<br/>
+      تطبيق Zaren Veto مستضاف على شبكة الإنترنت اللامركزية (ICP).
+    </p>
+
+  </div>
+
+  <script>
+    // Redirect target — the real Zaren Veto app on Internet Computer
+    var TARGET = 'https://zaren-veto-princessnarzinebanihashem.icp0.io';
+
+    // Update the href in case this file is served standalone
+    document.getElementById('appLink').href = TARGET;
+
+    // Redirect after 3 seconds (meta refresh is the primary mechanism)
+    var t = setTimeout(function() {
+      window.location.replace(TARGET);
+    }, 3000);
+
+    // If the user clicks the link, cancel the timer
+    document.getElementById('appLink').addEventListener('click', function() {
+      clearTimeout(t);
+    });
+  </script>
+
+</body>
+</html>
