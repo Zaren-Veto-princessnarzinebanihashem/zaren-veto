@@ -497,7 +497,7 @@ service : {
                                              err: text;
                                              ok;
                                            });
-  verifySession: (userId: UserId) -> (opt UserProfile) query;
+  verifySession: (userId: UserId) -> (opt UserProfile);
   viewStory: (storyId: nat) -> ();
   votePoll: (pollId: nat, optionId: nat) -> (bool);
 }

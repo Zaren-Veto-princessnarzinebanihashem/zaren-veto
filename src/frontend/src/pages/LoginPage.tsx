@@ -18,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import React from "react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -861,16 +862,23 @@ export default function LoginPage() {
   const [activeTab, setActiveTab] = useState<LoginTab>("password");
   const [passwordView, setPasswordView] = useState<PasswordView>("login");
 
+  // Navigate after authentication. Use a ref to track whether navigation
+  // has already been scheduled to prevent double-fires and React DOM
+  // insertBefore/removeChild errors that occur when navigation fires mid-render.
+  const navigatingRef = React.useRef(false);
   useEffect(() => {
-    if (status === "authenticated") {
-      // Defer navigation to AFTER the current React render cycle completes.
-      // Using window.location.href directly causes insertBefore/removeChild
-      // DOM crash because React is still reconciling when the navigation fires.
-      // setTimeout(0) schedules the navigation after the render is committed.
-      const timer = setTimeout(() => {
+    if (status === "authenticated" && !navigatingRef.current) {
+      navigatingRef.current = true;
+      // Use requestAnimationFrame to guarantee the current render cycle has
+      // fully committed before triggering a route change. This is safer than
+      // setTimeout(0) which can fire before paint on some browsers.
+      const raf = requestAnimationFrame(() => {
         void navigate({ to: "/", replace: true });
-      }, 0);
-      return () => clearTimeout(timer);
+      });
+      return () => cancelAnimationFrame(raf);
+    }
+    if (status !== "authenticated") {
+      navigatingRef.current = false;
     }
   }, [status, navigate]);
 

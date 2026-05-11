@@ -510,7 +510,7 @@ export const idlService = IDL.Service({
       [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
       [],
     ),
-  'verifySession' : IDL.Func([UserId], [IDL.Opt(UserProfile)], ['query']),
+  'verifySession' : IDL.Func([UserId], [IDL.Opt(UserProfile)], []),
   'viewStory' : IDL.Func([IDL.Nat], [], []),
   'votePoll' : IDL.Func([IDL.Nat, IDL.Nat], [IDL.Bool], []),
 });
@@ -1037,7 +1037,7 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Variant({ 'ok' : IDL.Null, 'err' : IDL.Text })],
         [],
       ),
-    'verifySession' : IDL.Func([UserId], [IDL.Opt(UserProfile)], ['query']),
+    'verifySession' : IDL.Func([UserId], [IDL.Opt(UserProfile)], []),
     'viewStory' : IDL.Func([IDL.Nat], [], []),
     'votePoll' : IDL.Func([IDL.Nat, IDL.Nat], [IDL.Bool], []),
   });

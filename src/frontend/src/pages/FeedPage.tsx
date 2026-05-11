@@ -101,7 +101,7 @@ function formatRelativeTime(timestamp: bigint): string {
   return new Date(ms).toLocaleDateString();
 }
 
-const MAX_CHARS = 5000;
+const MAX_CHARS = 50_000; // No practical limit — users can write as long as they want
 const PAGE_SIZE = 10;
 
 const REACTIONS: Array<{
@@ -599,7 +599,6 @@ function CreatePostForm() {
           onChange={(e) => setContent(e.target.value)}
           onFocus={() => setExpanded(true)}
           rows={expanded ? 4 : 2}
-          maxLength={MAX_CHARS}
           data-ocid="post-content-input"
           className="bg-secondary border-input resize-none transition-smooth text-sm leading-relaxed"
         />
@@ -1594,7 +1593,6 @@ function PostCard({
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
                 rows={4}
-                maxLength={MAX_CHARS}
                 autoFocus
                 disabled={editPost.isPending}
                 data-ocid={`edit-textarea-${postIdStr}`}
@@ -1685,7 +1683,7 @@ function PostCard({
             <button
               type="button"
               onClick={() => setShowReactionPicker((v) => !v)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-smooth hover:bg-secondary ${currentReaction ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-smooth hover:bg-secondary ${currentReaction === ReactionType.love ? "text-[#ef4444]" : currentReaction ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
               data-ocid={`react-btn-${postIdStr}`}
             >
               {reactionEmoji ? (

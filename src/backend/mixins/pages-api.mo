@@ -73,6 +73,7 @@ mixin (
   public shared query ({ caller }) func getMyPages() : async [PageTypes.PageView] {
     let result = List.empty<PageTypes.PageView>();
     for ((_, page) in pages.entries()) {
+      if (result.size() >= 100) return result.toArray();
       if (Principal.equal(page.ownerId, caller)) {
         result.add(Lib.pageToView(page, caller, pageFollowers));
       };

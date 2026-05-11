@@ -21,9 +21,10 @@ declare global {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 30_000,
-      retry: 1,
-      retryDelay: 2000,
+      // 5 minutes stale time — prevents constant re-verification every 30s
+      staleTime: 300_000,
+      retry: 2,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30_000),
     },
   },
 });

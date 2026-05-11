@@ -102,28 +102,55 @@ actor {
 
   // ─── Postupgrade: restore owner account if missing after any upgrade ────────
   system func postupgrade() {
-    let ownerNorm     = "princessnarzinebanihashem";
-    let ownerUsername = "Princess Narzine Bani Hashem";
-    switch (usernameIndex.get(ownerNorm)) {
-      case (?existingId) {
-        // Owner index entry exists — ensure user record is present
-        switch (users.get(existingId)) {
-          case (?_) {}; // already present, nothing to do
-          case null {
-            // Orphaned index — create a placeholder (no II principal available here)
-            // The owner can call ensureOwnerAccount() to assign her II principal
-            ();
-          };
+    // ─── Owner auto-restoration after any upgrade ──────────────────────────────
+    // Directly check if the owner principal exists in the users Map.
+    // This avoids the silent failure of the old usernameIndex-only lookup.
+    let ownerNorm      = "princessnarzinebanihashem";
+    let ownerUsername  = "Princess Narzine Bani Hashem";
+    let ownerPrincipal = Principal.fromText("bd3sg-teaaa-aaaaa-qaaba-cai");
+
+    let ownerInUsers = users.containsKey(ownerPrincipal);
+    if (not ownerInUsers) {
+      // Also check usernameIndex in case owner used a different principal
+      let ownerByIndex : Bool = switch (usernameIndex.get(ownerNorm)) {
+        case (?uid) users.containsKey(uid);
+        case null   false;
+      };
+      if (not ownerByIndex) {
+        // Owner is completely missing — recreate using the deterministic principal.
+        // We have no caller here, so we use the stable deterministic principal.
+        // Password is set to null; the owner must call loginWithPasswordOnly to set it.
+        let ownerUser : Types.User = {
+          id = ownerPrincipal;
+          var username       = ownerUsername;
+          var bio            = "";
+          var visibility     = #everyone;
+          var profilePhotoUrl = null;
+          var coverPhotoUrl   = null;
+          var officialPageProfilePhotoUrl = null;
+          var officialPageCoverPhotoUrl   = null;
+          var isVerified     = true;
+          var isSuspended    = false;
+          var suspendedUntil = null;
+          var isBanned       = false;
+          var passwordHash   = null;  // owner sets password on first loginWithPasswordOnly
+          var email          = null;
+          var aboutBio       = null;
+          var aboutLocation  = null;
+          var aboutWork      = null;
+          var aboutEducation = null;
+          var aboutWebsite   = null;
+          var birthdate      = null;
         };
+        users.add(ownerPrincipal, ownerUser);
+        usernameIndex.add(ownerNorm, ownerPrincipal);
+        verified.add(ownerPrincipal);
       };
-      case null {
-        // Owner not in index at all — this happens on the very first install
-        // or after a state-wiping reinstall.  We can't create the user record
-        // without a real Principal here (postupgrade has no caller), so we
-        // leave the map empty and rely on ensureOwnerAccount() / loginWithPasswordOnly()
-        // being called by the owner to self-restore her account.
-        ();
-      };
+    } else {
+      // Owner record exists under the deterministic principal —
+      // ensure the usernameIndex entry is consistent.
+      usernameIndex.add(ownerNorm, ownerPrincipal);
+      verified.add(ownerPrincipal);
     };
   };
 

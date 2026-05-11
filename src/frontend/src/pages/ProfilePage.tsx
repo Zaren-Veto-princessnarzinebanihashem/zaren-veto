@@ -1578,6 +1578,40 @@ function SavedPostsSection() {
   );
 }
 
+// ─── Session Expired (own profile not found after canister upgrade) ──────────
+
+function SessionExpired() {
+  const navigate = useNavigate();
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      className="flex flex-col items-center justify-center py-24 text-center"
+      data-ocid="profile.session_expired"
+    >
+      <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4">
+        <Lock className="w-7 h-7 text-amber-400" />
+      </div>
+      <h2 className="font-display text-xl font-semibold text-foreground mb-2">
+        Session expirée
+      </h2>
+      <p className="text-sm text-muted-foreground mb-6 max-w-xs leading-relaxed">
+        Votre session a expiré. Veuillez vous reconnecter pour accéder à votre
+        profil.
+      </p>
+      <Button
+        onClick={() => void navigate({ to: "/login" })}
+        className="gap-2"
+        data-ocid="profile.session_expired_login_button"
+      >
+        <Lock className="w-4 h-4" />
+        Se connecter
+      </Button>
+    </motion.div>
+  );
+}
+
 // ─── Not Found ────────────────────────────────────────────────────────────────
 
 function UserNotFound() {
@@ -1639,7 +1673,9 @@ export default function ProfilePage() {
   const { uploadImage } = useImageUpload();
 
   useEffect(() => {
-    if (status === "unauthenticated") void navigate({ to: "/login" });
+    if (status === "unauthenticated" || status === "registering") {
+      void navigate({ to: "/login" });
+    }
   }, [status, navigate]);
 
   const isOwnProfile =
@@ -1931,15 +1967,26 @@ export default function ProfilePage() {
     );
   }
 
-  if (status === "unauthenticated") return null;
+  if (status === "unauthenticated" || status === "registering") return null;
 
   // ── Show error if profile not found or ID is invalid ──
+  // Special case: if this is the current user's own profile but the backend
+  // returned null/undefined, it means the canister was upgraded and the user
+  // record was wiped. Show a session-expired prompt instead of "user not found".
   if (
     !userId ||
     profileError ||
     userProfile === null ||
     userProfile === undefined
   ) {
+    // Own profile not found → session expired after canister upgrade
+    if (isOwnProfile || (status === "authenticated" && !userId)) {
+      return (
+        <Layout>
+          <SessionExpired />
+        </Layout>
+      );
+    }
     return (
       <Layout>
         <UserNotFound />

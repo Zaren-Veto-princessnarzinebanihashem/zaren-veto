@@ -105,6 +105,7 @@ mixin (
   public shared query ({ caller }) func getMyGroups() : async [Types.GroupView] {
     let result = List.empty<Types.GroupView>();
     for ((_, group) in groups.entries()) {
+      if (result.size() >= 100) return result.toArray();
       let view = Lib.groupToView(group, caller);
       if (view.isMember) {
         result.add(view);

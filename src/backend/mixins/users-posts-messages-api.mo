@@ -240,24 +240,19 @@ mixin (
     let normSearch = Lib.normalizeUsername(username);
     let isOwnerName = Lib.isReservedName(username);
 
-    // ── Owner auto-recovery: create account if missing ──────────────────────
-    // If the owner's name is used but no account exists, auto-create it
-    // using a stable deterministic owner principal so she's never locked out.
+    // ── Owner auto-recovery: create account if completely missing ────────────
     if (isOwnerName) {
       let ownerNorm = "princessnarzinebanihashem";
+      let ownerPrincipal = Principal.fromText("bd3sg-teaaa-aaaaa-qaaba-cai");
       let hasExisting = switch (usernameIndex.get(ownerNorm)) {
         case null false;
         case (?uid) users.containsKey(uid);
       };
       if (not hasExisting) {
-        // Validate password before creating
+        // Account missing entirely — create with deterministic principal
         if (not Lib.validatePassword(password)) {
           return #err("Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one digit");
         };
-        // Use a stable deterministic principal for the owner account.
-        // This principal is recognisable (opaque-canister-style) and will
-        // never be produced by Internet Identity so there is no collision risk.
-        let ownerPrincipal = Principal.fromText("bd3sg-teaaa-aaaaa-qaaba-cai");
         let ownerUser : Types.User = {
           id = ownerPrincipal;
           var username = "Princess Narzine Bani Hashem";
@@ -303,6 +298,129 @@ mixin (
           birthdate       = null;
         };
         return #ok({ profile; userId = ownerPrincipal });
+      };
+      // Owner account exists — check if password hash is set
+      let ownerPrincipalKey = switch (usernameIndex.get(ownerNorm)) {
+        case (?uid) uid;
+        case null ownerPrincipal;
+      };
+      switch (users.get(ownerPrincipalKey)) {
+        case (?ownerUser) {
+          switch (ownerUser.passwordHash) {
+            case null {
+              // Owner exists but has no password yet — set it now (first-time setup)
+              if (not Lib.validatePassword(password)) {
+                return #err("Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one digit");
+              };
+              ownerUser.passwordHash := ?(Lib.hashPassword(password));
+              if (ownerUser.bio.size() > 0) { ownerUser.bio := "" };
+              ownerUser.isVerified := true;
+              verified.add(ownerPrincipalKey);
+              let myFollowing = switch (follows.get(ownerPrincipalKey)) { case (?s) s; case null Set.empty<Common.UserId>() };
+              let profile : Types.UserProfile = {
+                id             = ownerPrincipalKey;
+                username       = ownerUser.username;
+                bio            = "";
+                visibility     = ownerUser.visibility;
+                postCount      = 0;
+                followerCount  = 19000;
+                followingCount = myFollowing.size();
+                profilePhotoUrl = ownerUser.profilePhotoUrl;
+                coverPhotoUrl   = ownerUser.coverPhotoUrl;
+                isVerified      = true;
+                isOfficialPage  = false;
+                aboutBio        = null;
+                aboutLocation   = ownerUser.aboutLocation;
+                aboutWork       = ownerUser.aboutWork;
+                aboutEducation  = ownerUser.aboutEducation;
+                aboutWebsite    = ownerUser.aboutWebsite;
+                birthdate       = ownerUser.birthdate;
+              };
+              return #ok({ profile; userId = ownerPrincipalKey });
+            };
+            case (?storedHash) {
+              // Password is set — verify it
+              let submittedHash = Lib.hashPassword(password);
+              if (submittedHash == storedHash) {
+                if (ownerUser.bio.size() > 0) { ownerUser.bio := "" };
+                let myFollowing = switch (follows.get(ownerPrincipalKey)) { case (?s) s; case null Set.empty<Common.UserId>() };
+                let profile : Types.UserProfile = {
+                  id             = ownerPrincipalKey;
+                  username       = ownerUser.username;
+                  bio            = "";
+                  visibility     = ownerUser.visibility;
+                  postCount      = 0;
+                  followerCount  = 19000;
+                  followingCount = myFollowing.size();
+                  profilePhotoUrl = ownerUser.profilePhotoUrl;
+                  coverPhotoUrl   = ownerUser.coverPhotoUrl;
+                  isVerified      = true;
+                  isOfficialPage  = false;
+                  aboutBio        = null;
+                  aboutLocation   = ownerUser.aboutLocation;
+                  aboutWork       = ownerUser.aboutWork;
+                  aboutEducation  = ownerUser.aboutEducation;
+                  aboutWebsite    = ownerUser.aboutWebsite;
+                  birthdate       = ownerUser.birthdate;
+                };
+                return #ok({ profile; userId = ownerPrincipalKey });
+              } else {
+                return #err("Invalid username or password");
+              };
+            };
+          };
+        };
+        case null {
+          // Index points to non-existent user — index is stale, recreate owner
+          if (not Lib.validatePassword(password)) {
+            return #err("Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, and one digit");
+          };
+          let ownerUser : Types.User = {
+            id = ownerPrincipal;
+            var username = "Princess Narzine Bani Hashem";
+            var bio = "";
+            var visibility = #everyone;
+            var profilePhotoUrl = null;
+            var coverPhotoUrl = null;
+            var officialPageProfilePhotoUrl = null;
+            var officialPageCoverPhotoUrl = null;
+            var isVerified = true;
+            var isSuspended = false;
+            var suspendedUntil = null;
+            var isBanned = false;
+            var passwordHash = ?(Lib.hashPassword(password));
+            var email = null;
+            var aboutBio = null;
+            var aboutLocation = null;
+            var aboutWork = null;
+            var aboutEducation = null;
+            var aboutWebsite = null;
+            var birthdate = null;
+          };
+          users.add(ownerPrincipal, ownerUser);
+          usernameIndex.add(ownerNorm, ownerPrincipal);
+          verified.add(ownerPrincipal);
+          let profile : Types.UserProfile = {
+            id             = ownerPrincipal;
+            username       = "Princess Narzine Bani Hashem";
+            bio            = "";
+            visibility     = #everyone;
+            postCount      = 0;
+            followerCount  = 19000;
+            followingCount = 0;
+            profilePhotoUrl = null;
+            coverPhotoUrl   = null;
+            isVerified      = true;
+            isOfficialPage  = false;
+            aboutBio        = null;
+            aboutLocation   = null;
+            aboutWork       = null;
+            aboutEducation  = null;
+            aboutWebsite    = null;
+            birthdate       = null;
+          };
+          return #ok({ profile; userId = ownerPrincipal });
+        };
       };
     };
     // ────────────────────────────────────────────────────────────────────────
@@ -387,9 +505,63 @@ mixin (
   /// Verify that a stored session (userId) is still valid.
   /// Returns the user profile if valid, null if not found.
   /// Used by the frontend to restore sessions after page reload.
-  public shared query func verifySession(userId : Common.UserId) : async ?Types.UserProfile {
+  public shared func verifySession(userId : Common.UserId) : async ?Types.UserProfile {
+    // Special case: if the userId matches the owner's deterministic principal
+    // and the owner is missing from the map, auto-restore and return the profile.
+    let ownerPrincipal = Principal.fromText("bd3sg-teaaa-aaaaa-qaaba-cai");
+    let isOwnerPrincipal = Principal.equal(userId, ownerPrincipal);
+
     switch (users.get(userId)) {
-      case null { null };
+      case null {
+        if (isOwnerPrincipal) {
+          // Owner account missing — auto-restore stub (no password set yet)
+          let ownerNorm = "princessnarzinebanihashem";
+          let ownerUser : Types.User = {
+            id = ownerPrincipal;
+            var username       = "Princess Narzine Bani Hashem";
+            var bio            = "";
+            var visibility     = #everyone;
+            var profilePhotoUrl = null;
+            var coverPhotoUrl   = null;
+            var officialPageProfilePhotoUrl = null;
+            var officialPageCoverPhotoUrl   = null;
+            var isVerified     = true;
+            var isSuspended    = false;
+            var suspendedUntil = null;
+            var isBanned       = false;
+            var passwordHash   = null;
+            var email          = null;
+            var aboutBio       = null;
+            var aboutLocation  = null;
+            var aboutWork      = null;
+            var aboutEducation = null;
+            var aboutWebsite   = null;
+            var birthdate      = null;
+          };
+          users.add(ownerPrincipal, ownerUser);
+          usernameIndex.add(ownerNorm, ownerPrincipal);
+          verified.add(ownerPrincipal);
+          ?{
+            id             = ownerPrincipal;
+            username       = "Princess Narzine Bani Hashem";
+            bio            = "";
+            visibility     = #everyone;
+            postCount      = 0;
+            followerCount  = 19000;
+            followingCount = 0;
+            profilePhotoUrl = null;
+            coverPhotoUrl   = null;
+            isVerified      = true;
+            isOfficialPage  = false;
+            aboutBio        = null;
+            aboutLocation   = null;
+            aboutWork       = null;
+            aboutEducation  = null;
+            aboutWebsite    = null;
+            birthdate       = null;
+          };
+        } else { null };
+      };
       case (?user) {
         let isOwner = Lib.isReservedName(user.username);
         let myFollowing  = switch (follows.get(userId)) { case (?s) s; case null Set.empty<Common.UserId>() };
